@@ -1,19 +1,22 @@
 package models
 
-import "go.mongodb.org/mongo-driver/bson/primitive"
+import (
+	"time"
 
-type LoginType struct {
-	ID   int    `bson:"id"`
-	Name string `bson:"name"`
-}
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
 
 type User struct {
-	ID          primitive.ObjectID `bson:"_id "`
-	GUID        string             `bson:"guid" json:"guid"`
-	Login       string             `bson:"login" json:"login"`
-	LoginType   LoginType          `bson:"logintype" json:"logintype"`
-	Name        string             `bson:"name" json:"name"`
-	LastName    string             `bson:"lastname" json:"lastname"`
-	LastLoginAt string             `bson:"lastloginat" json:"lastloginat"`
-	CreatedAt   string             `bson:"createdat" json:"createdat"`
+	ID            primitive.ObjectID `bson:"_id "`
+	First_Name    *string            `json:"first_name" validate:"required, min=2, max=100"`
+	Last_Name     *string            `json:"last_name" validate:"required, min=2, max=100"`
+	Password      *string            `json:"password" validate:"required,min=6"`
+	Email         *string            `json:"email" validate:"required,email"`
+	Phone         *string            `json:"phone" validate:"required"`
+	Token         *string            `json:"token"`
+	User_Type     *string            `json:"user_type" validate:"required,eq=ADMIN|eq=USER"`
+	Refresh_Token *string            `json:"refresh_token"`
+	Created_At     time.Time          `json:"created_at"`
+	Updated_At     time.Time          `json:"updated_at"`
+	User_id       string             `json:"user_id"`
 }
