@@ -3,9 +3,9 @@ package main
 import (
 	"braincome/cmd/server"
 	"braincome/internal/handler"
-	"braincome/pkg/service"
+	"braincome/internal/repository"
+	"braincome/internal/service"
 	"context"
-	"crypto/rand"
 	"fmt"
 	"log"
 	"os"
@@ -27,8 +27,7 @@ func main() {
 		Driver:   viper.GetString("db.driver"),
 		Username: viper.GetString("db.username"),
 		Password: viper.GetString("db.password"),
-		Host:     viper.GetString("db.host"),
-		Port:     viper.GetString("db.port"),
+		Cluster:  viper.GetString("db.cluster"),
 	})
 
 	// * Закрываем соединение, когда функция вернется
