@@ -1,8 +1,7 @@
 port: "8080"
 
 db:
-  driver: "mongodb"
-  username: "mongo"
-  password: "123"
-  host: "localhost"
-  port: "27017"
+  driver: "mongodb+srv"
+  username: "chingizkhantuzelov"
+  password: "Jasmina19"
+  cluster: "cluster0.5avxtpk.mongodb.net"
