@@ -13,12 +13,15 @@ type Config struct {
 	Driver   string
 	Username string
 	Password string
-	Host     string
-	Port     string
+	Cluster  string
 }
 
+/*
+mongodb+srv://chingizkhantuzelov:<password>@cluster0.5avxtpk.mongodb.net/?retryWrites=true&w=majority
+*/
+
 func NewMongoDB(cnf Config) (*mongo.Client, error) {
-	URI := fmt.Sprintf("%s://%s:%s", cnf.Driver, cnf.Username, cnf.Port)
+	URI := fmt.Sprintf("%s://%s:%s@%s/?retryWrites=true&w=majority", cnf.Driver, cnf.Username, cnf.Password, cnf.Cluster)
 	// * Установим параметры клиента
 	clientOptions := options.Client().ApplyURI(URI)
 
@@ -36,3 +39,4 @@ func NewMongoDB(cnf Config) (*mongo.Client, error) {
 
 	return client, nil
 }
+
