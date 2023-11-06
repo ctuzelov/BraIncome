@@ -8,7 +8,9 @@ import (
 
 type Authorization interface {
 	CreateUser(user models.User) (int, error)
-	GetUser(username, password string) (models.User, error)
+	FindEmail(email string) (models.User, error)
+	SetUserId(foundUser *models.User)
+	UpdateAllTokens(signedToken string, signedRefreshToken string, userId string)
 }
 
 type Repository struct {
