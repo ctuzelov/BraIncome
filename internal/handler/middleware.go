@@ -2,7 +2,6 @@ package handler
 
 import (
 	"braincome/internal/helper"
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -11,7 +10,7 @@ import (
 func (h *Handler) Authenticate(c *gin.Context) {
 	clientToken := c.Request.Header.Get("token")
 	if clientToken == "" {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("No Authorization header provides")})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "No Authorization header provides"})
 		c.Abort()
 		return
 	}

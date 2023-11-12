@@ -1,6 +1,7 @@
 package helper
 
 import (
+	"braincome/internal/validator"
 	"log"
 
 	"golang.org/x/crypto/bcrypt"
@@ -21,7 +22,7 @@ func VerifyPassword(userPassword string, providedPassword string) (bool, string)
 	msg := ""
 
 	if err != nil {
-		msg = "email or password is incorrect"
+		msg = validator.MsgNotCorrectPassword
 		check = false
 	}
 

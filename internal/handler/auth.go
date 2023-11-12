@@ -18,7 +18,7 @@ func (h *Handler) SignUp(c *gin.Context) {
 	}
 
 	validationErr := validator.GetErrMsgs(user)
-	if validationErr != nil {
+	if len(validationErr) != 0 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": validationErr})
 		return
 	}

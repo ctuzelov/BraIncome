@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -63,7 +64,9 @@ func (r *AuthMongo) CreateUser(user models.User) (int, error) {
 	}
 	defer cancel()
 
-	return resultInsertionNumber.InsertedID.(int), nil
+	insertNumber, _ := strconv.Atoi(resultInsertionNumber.InsertedID.(primitive.ObjectID).Hex())
+
+	return insertNumber, nil
 }
 
 func (r *AuthMongo) UpdateAllTokens(signedToken string, signedRefreshToken string, userId string) {

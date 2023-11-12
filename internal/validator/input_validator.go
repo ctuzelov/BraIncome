@@ -13,6 +13,7 @@ const (
 	MsgNameExists         = "name already exists"
 	MsgInvalidEmail       = "write correct email"
 	MsgInvalidName        = "write correct name. Username should start with an alphabet [A-Za-z] and all other characters can be alphabets, numbers or an underscore so, [A-Za-z0-9_]. The username consists of 5 to 15 characters inclusive."
+	MsgInvalidLastName    = "write correct name. Username should start with an alphabet [A-Za-z] and all other characters can be alphabets, numbers or an underscore so, [A-Za-z0-9_]. The username consists of 5 to 15 characters inclusive."
 	MsgInvalidPass        = "password must contain letters, numbers and must be at least 6 characters."
 	MsgUserNotFound       = "user not found"
 	MsgPassDontMatch      = "the passwords don't match"
@@ -28,7 +29,7 @@ func GetErrMsgs(m models.User) map[string]string {
 		errmsgs["name"] = MsgInvalidName
 	}
 	if !isValidName(m.Last_name) {
-		errmsgs["name"] = MsgInvalidName
+		errmsgs["name"] = MsgInvalidLastName
 	}
 	if !isValidPassword(m.Password) {
 		errmsgs["pass"] = MsgInvalidPass

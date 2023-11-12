@@ -27,9 +27,9 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	admin := router.Group("/admin")
 	admin.Use(h.Authenticate) // Apply the isAdmin middleware to the admin group
 
-	// Add the admin-only routes here
-	admin.GET("/users", h.GetUsers)
-	admin.GET("/user/:user_id", h.GetUser)
+	// // Add the admin-only routes here
+	// admin.GET("/users", h.GetUsers)
+	// admin.GET("/user/:user_id", h.GetUser)
 
 	return router
 }

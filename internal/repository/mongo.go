@@ -23,7 +23,8 @@ mongodb+srv://chingizkhantuzelov:<password>@cluster0.5avxtpk.mongodb.net/?retryW
 func NewMongoDB(cnf Config) (*mongo.Client, error) {
 	URI := fmt.Sprintf("%s://%s:%s@%s/?retryWrites=true&w=majority", cnf.Driver, cnf.Username, cnf.Password, cnf.Cluster)
 	// * Установим параметры клиента
-	clientOptions := options.Client().ApplyURI(URI)
+	serverAPI := options.ServerAPI(options.ServerAPIVersion1)
+	clientOptions := options.Client().ApplyURI(URI).SetServerAPIOptions(serverAPI)
 
 	// * Подключимся к MongoDB
 	client, err := mongo.Connect(context.Background(), clientOptions)
@@ -39,4 +40,3 @@ func NewMongoDB(cnf Config) (*mongo.Client, error) {
 
 	return client, nil
 }
-

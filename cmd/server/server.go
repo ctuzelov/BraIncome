@@ -30,7 +30,7 @@ func (s *Server) Shutdown(ctx context.Context) error {
 }
 
 func InitConfig() error {
-	viper.AddConfigPath("pkg/configs")
+	viper.AddConfigPath("configs")
 	viper.SetConfigName("config")
 	return viper.ReadInConfig()
 }
