@@ -10,16 +10,19 @@ type Authorization interface {
 	GetUserByEmail(email string, password string) (models.User, error)
 }
 
-type User interface {
+type Authentication interface {
+	CheckAuthority(user_type, role string) bool
+	GetUserInfo(userId string) (models.User, error)
 }
 
 type Service struct {
 	Authorization
-	User
+	Authentication
 }
 
 func NewService(repo *repository.Repository) *Service {
 	return &Service{
-		Authorization: NewAuthService(repo.Authorization),
+		Authorization:  NewAuthService(repo.Authorization),
+		Authentication: NewUserInfo(repo.Authentication),
 	}
 }
