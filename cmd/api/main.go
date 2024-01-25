@@ -38,10 +38,15 @@ func main() {
 		fmt.Println("Connection to MongoDB closed.")
 	}()
 
+	errorLog := log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
+
 	// * инициализация слоев и сервера
 	repo := repository.NewRepository(db)
 	service := service.NewService(repo)
-	handler := handler.NewHandler(service)
+	handler, err := handler.NewHandler(errorLog, service)
+	if err != nil {
+		errorLog.Fatal(err)
+	}
 	srv := new(server.Server)
 	go func() {
 		if err := srv.Run(viper.GetString("port"), handler.InitRoutes()); err != nil {
@@ -56,7 +61,7 @@ func main() {
 	signal.Notify(quit, syscall.SIGTERM, syscall.SIGINT)
 	<-quit
 
-	log.Print("TodoApp Shutting Down")
+	log.Print("education platform's shutting down")
 
 	if err := srv.Shutdown(context.Background()); err != nil {
 		logrus.Errorf("error occured on server shutting down: %s", err.Error())
