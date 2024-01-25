@@ -26,5 +26,6 @@ func (h *Handler) Authenticate(c *gin.Context) {
 	c.Set("last_name", claims.Last_name)
 	c.Set("uid", claims.Uid)
 	c.Set("user_type", claims.User_type)
+	
 	c.Next()
 }
