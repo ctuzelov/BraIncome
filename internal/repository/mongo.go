@@ -18,6 +18,7 @@ type Config struct {
 
 /*
 mongodb+srv://chingizkhantuzelov:<password>@cluster0.5avxtpk.mongodb.net/?retryWrites=true&w=majority
+mongodb+srv://chingizkhantuzelov:<password>@cluster0.5avxtpk.mongodb.net/?retryWrites=true&w=majority
 */
 
 func NewMongoDB(cnf Config) (*mongo.Client, error) {

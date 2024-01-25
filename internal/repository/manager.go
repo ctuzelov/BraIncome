@@ -13,12 +13,19 @@ type Authorization interface {
 	UpdateAllTokens(signedToken string, signedRefreshToken string, userId string)
 }
 
+type Authentication interface {
+	GetUser(userId string) (models.User, error)
+	GetUserType(userId string) (string, error)
+}
+
 type Repository struct {
 	Authorization
+	Authentication
 }
 
 func NewRepository(db *mongo.Client) *Repository {
 	return &Repository{
-		Authorization: NewAuthMongo(db),
+		Authorization:  NewAuthMongo(db),
+		Authentication: NewUserMongo(db),
 	}
 }
