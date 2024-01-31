@@ -23,22 +23,27 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	router := gin.New()
 	router.Static("/assets", "assets/")
 
+	router.Use(h.Middleware)
+
 	router.GET("/", h.HomePage)
 	router.GET("/courses", h.Courses)
 
-	auth := router.Group("/auth")
-	{
-		auth.POST("/sign-up", h.SignUp)
-		auth.POST("/sign-in", h.SignIn)
-	}
+	router.GET("/contact", h.ContactPage)
+	router.POST("/contact", h.Contact)
 
-	// Define a new group for admin-only routes
+	router.GET("/sign-up", h.SignUpPage)
+	router.GET("/sign-in", h.SignInPage)
+	router.POST("/sign-up", h.SignUp)
+	router.POST("/sign-in", h.SignIn)
+
+	router.POST("/sign-out", h.SignOut).Use(h.RequireAuth)
+
+	router.GET("/my-profile", h.MyProfile).Use(h.RequireAuth)
+
 	admin := router.Group("/admin")
-	admin.Use(h.Authenticate) // Apply the isAdmin middleware to the admin group
+	admin.Use(h.RequireAuth)
 
-	// // Add the admin-only routes here
-	admin.GET("/user/:user_id", h.GetUser)
-	// admin.POST("/poste/video", h.PostVideo)
+	// admin.POST("/post/video", h.PostVideo)
 	// admin.GET("/users", h.GetUsers)
 
 	return router

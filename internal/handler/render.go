@@ -1,18 +1,11 @@
 package handler
 
 import (
-	"braincome/internal/models"
 	"bytes"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
-
-type Data struct {
-	User    models.User
-	IsAuth  bool
-	IsAdmin bool
-}
 
 func (h *Handler) TemplateRender(c *gin.Context, status int, page string, data interface{}) {
 	buf := new(bytes.Buffer)

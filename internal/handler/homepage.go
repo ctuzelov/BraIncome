@@ -7,6 +7,6 @@ import (
 )
 
 func (h *Handler) HomePage(c *gin.Context) {
-
-	h.TemplateRender(c, http.StatusOK, "index.html", nil)
+	data := c.MustGet("data").(*Data)
+	h.TemplateRender(c, http.StatusOK, "index.html", data)
 }

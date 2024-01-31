@@ -1,20 +1,13 @@
 package repository
 
 import (
-	"braincome/internal/helper"
 	"braincome/internal/models"
-	"braincome/internal/validator"
 	"context"
-	"fmt"
-	"log"
-	"net/http"
-	"strconv"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type AuthMongo struct {
@@ -25,112 +18,205 @@ func NewAuthMongo(db *mongo.Client) *AuthMongo {
 	return &AuthMongo{db: db}
 }
 
-func (r *AuthMongo) CreateUser(user models.User) (int, error) {
+func (r *AuthMongo) InsertUser(m models.User) error {
 	var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
+	collection := r.db.Database("cluster0").Collection("user")
 
-	UserCollection := r.db.Database("cluster0").Collection("user")
-
-	ExistedEmails, err := UserCollection.CountDocuments(ctx, bson.M{"email": user.Email})
 	defer cancel()
+
+	// Insert the user document into the MongoDB collection
+	_, err := collection.InsertOne(ctx, m)
 	if err != nil {
-		return http.StatusInternalServerError, err
-	}
-	if ExistedEmails > 0 {
-		return http.StatusInternalServerError, fmt.Errorf(validator.MsgEmailExists)
-	}
-	password := helper.HashPassword(user.Password)
-	user.Password = password
-
-	ExistedNumbers, err := UserCollection.CountDocuments(ctx, bson.M{"phone": user.Phone})
-	defer cancel()
-	if err != nil {
-		return http.StatusInternalServerError, err
-	}
-	if ExistedNumbers > 0 {
-		return http.StatusInternalServerError, fmt.Errorf(validator.MsgNumberExists)
+		return err
 	}
 
-	user.Created_at, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
-	user.Updated_at, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
-	user.ID = primitive.NewObjectID()
-	user.User_id = user.ID.Hex()
-	token, refreshToken, _ := helper.GenerateAllTokens(user.Email, user.First_name, user.Last_name, user.User_type, user.User_id)
-	user.Token = &token
-	user.Refresh_token = &refreshToken
-
-	resultInsertionNumber, insertErr := UserCollection.InsertOne(ctx, user)
-	if insertErr != nil {
-		return http.StatusInternalServerError, insertErr
-	}
-	defer cancel()
-
-	insertNumber, _ := strconv.Atoi(resultInsertionNumber.InsertedID.(primitive.ObjectID).Hex())
-
-	return insertNumber, nil
+	return nil
 }
 
-func (r *AuthMongo) UpdateAllTokens(signedToken string, signedRefreshToken string, userId string) {
-	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Second)
+func (r *AuthMongo) UserByEmail(email string) (models.User, error) {
+	var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
+	collection := r.db.Database("cluster0").Collection("user")
 
-	UserCollection := r.db.Database("cluster0").Collection("user")
+	defer cancel()
 
-	var updateObj primitive.D
+	// Define the filter to find the user by email
+	filter := bson.M{"email": email}
 
-	updateObj = append(updateObj, bson.E{Key: "token", Value: signedToken})
-	updateObj = append(updateObj, bson.E{Key: "refresh_token", Value: signedRefreshToken})
-
-	Updated_at, _ := time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
-	updateObj = append(updateObj, bson.E{Key: "updated_at", Value: Updated_at})
-
-	upsert := true
-	filter := bson.M{"user_id": userId}
-	opt := options.UpdateOptions{
-		Upsert: &upsert,
+	// Find the user in the MongoDB collection
+	var user models.User
+	err := collection.FindOne(ctx, filter).Decode(&user)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return user, models.ErrNoRecord
+		}
+		return user, err
 	}
 
-	_, err := UserCollection.UpdateOne(
-		ctx,
-		filter,
-		bson.D{
-			{Key: "$set", Value: updateObj},
+	return user, nil
+}
+
+func (r *AuthMongo) UserByName(name string) (models.User, error) {
+	var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
+	collection := r.db.Database("cluster0").Collection("user")
+	defer cancel()
+
+	// Define the filter to find the user by name
+	filter := bson.M{"name": name}
+
+	// Find the user in the MongoDB collection
+	var user models.User
+	err := collection.FindOne(ctx, filter).Decode(&user)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return user, models.ErrNoRecord
+		}
+		return user, err
+	}
+
+	return user, nil
+}
+
+func (r *AuthMongo) UserByToken(token string) (models.User, error) {
+	var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
+	collection := r.db.Database("cluster0").Collection("user")
+	defer cancel()
+
+	// Define the filter to find the user by token and not expired
+	filter := bson.M{"token": token, "expires": bson.M{"$gt": time.Now()}}
+
+	// Find the user in the MongoDB collection
+	var user models.User
+	err := collection.FindOne(ctx, filter).Decode(&user)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return user, models.ErrNoRecord
+		}
+		return user, err
+	}
+
+	return user, nil
+}
+
+func (r *AuthMongo) UserById(id primitive.ObjectID) (models.User, error) {
+	var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
+	collection := r.db.Database("cluster0").Collection("user")
+	defer cancel()
+
+	// Define the filter to find the user by ID
+	filter := bson.M{"_id": id}
+
+	// Find the user in the MongoDB collection
+	var user models.User
+	err := collection.FindOne(ctx, filter).Decode(&user)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return user, models.ErrNoRecord
+		}
+		return user, err
+	}
+
+	return user, nil
+}
+
+func (r *AuthMongo) SetToken(id primitive.ObjectID, token string) error {
+	var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
+	collection := r.db.Database("cluster0").Collection("user")
+	defer cancel()
+
+	// Define the filter to update the user by ID
+	filter := bson.M{"_id": id}
+
+	// Define the update to set the token and expiration time
+	update := bson.M{
+		"$set": bson.M{
+			"token":   token,
+			"expires": time.Now().Add(8 * time.Hour),
 		},
-		&opt,
-	)
-
-	defer cancel()
-
-	if err != nil {
-		log.Fatal(err)
-		return
 	}
+
+	// Update the user in the MongoDB collection
+	_, err := collection.UpdateOne(ctx, filter, update)
+	return err
 }
 
-func (r *AuthMongo) SetUserId(foundUser *models.User) {
+func (r *AuthMongo) RemoveToken(token string) error {
 	var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
-
-	UserCollection := r.db.Database("cluster0").Collection("user")
-
-	UserCollection.FindOne(ctx, bson.M{"user_id": foundUser.User_id}).Decode(&foundUser)
-
+	collection := r.db.Database("cluster0").Collection("user")
 	defer cancel()
+
+	// Define the filter to find the user by token
+	filter := bson.M{"token": token}
+
+	// Define the update to remove the token
+	update := bson.M{"$set": bson.M{"token": nil}}
+
+	// Update the user in the MongoDB collection
+	_, err := collection.UpdateOne(ctx, filter, update)
+	return err
 }
 
-func (r *AuthMongo) FindEmail(email string) (models.User, error) {
-	var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
+// func (r *AuthMongo) UpdateAllTokens(signedToken string, signedRefreshToken string, userId string) {
+// 	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Second)
 
-	UserCollection := r.db.Database("cluster0").Collection("user")
+// 	UserCollection := r.db.Database("cluster0").Collection("user")
 
-	var foundUser models.User
+// 	var updateObj primitive.D
 
-	err := UserCollection.FindOne(ctx, bson.M{"email": email}).Decode(&foundUser)
-	defer cancel()
-	if err != nil {
-		return models.User{}, err
-	}
+// 	updateObj = append(updateObj, bson.E{Key: "token", Value: signedToken})
+// 	updateObj = append(updateObj, bson.E{Key: "refresh_token", Value: signedRefreshToken})
 
-	if foundUser.Email == "" {
-		return models.User{}, fmt.Errorf(validator.MsgUserNotFound)
-	}
+// 	Updated_at, _ := time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
+// 	updateObj = append(updateObj, bson.E{Key: "updated_at", Value: Updated_at})
 
-	return foundUser, nil
-}
+// 	upsert := true
+// 	filter := bson.M{"user_id": userId}
+// 	opt := options.UpdateOptions{
+// 		Upsert: &upsert,
+// 	}
+
+// 	_, err := UserCollection.UpdateOne(
+// 		ctx,
+// 		filter,
+// 		bson.D{
+// 			{Key: "$set", Value: updateObj},
+// 		},
+// 		&opt,
+// 	)
+
+// 	defer cancel()
+
+// 	if err != nil {
+// 		log.Fatal(err)
+// 		return
+// 	}
+// }
+
+// func (r *AuthMongo) SetUserId(foundUser *models.User) {
+// 	var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
+
+// 	UserCollection := r.db.Database("cluster0").Collection("user")
+
+// 	UserCollection.FindOne(ctx, bson.M{"user_id": foundUser.User_id}).Decode(&foundUser)
+
+// 	defer cancel()
+// }
+
+// func (r *AuthMongo) FindEmail(email string) (models.User, error) {
+// 	var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
+
+// 	UserCollection := r.db.Database("cluster0").Collection("user")
+
+// 	var foundUser models.User
+
+// 	err := UserCollection.FindOne(ctx, bson.M{"email": email}).Decode(&foundUser)
+// 	defer cancel()
+// 	if err != nil {
+// 		return models.User{}, err
+// 	}
+
+// 	if foundUser.Email == "" {
+// 		return models.User{}, fmt.Errorf(validator.MsgUserNotFound)
+// 	}
+
+// 	return foundUser, nil
+// }

@@ -3,49 +3,123 @@ package handler
 import (
 	"braincome/internal/models"
 	"braincome/internal/validator"
-	"log"
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
-func (h *Handler) SignUp(c *gin.Context) {
-	var user models.User
+func (h *Handler) SignUpPage(c *gin.Context) {
+	data := c.MustGet("data").(*Data)
+	h.TemplateRender(c, http.StatusOK, "sign-up.html", data)
+}
 
-	if err := c.BindJSON(&user); err != nil {
+func (h *Handler) SignInPage(c *gin.Context) {
+	data := c.MustGet("data").(*Data)
+	h.TemplateRender(c, http.StatusOK, "log-in.html", data)
+}
+
+func (h *Handler) SignUp(c *gin.Context) {
+	rawJSON, _ := c.GetRawData()
+	fmt.Println(string(rawJSON))
+	var form models.User
+
+	if err := c.ShouldBindJSON(&form); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+	fmt.Println(form.Email, form.First_name, form.Last_name, form.Password)
 
-	validationErr := validator.GetErrMsgs(user)
-	if len(validationErr) != 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": validationErr})
+	data := c.MustGet("data").(*Data)
+	data.Content = form
+
+	if form.Email == "" || form.First_name == "" || form.Last_name == "" || form.Password == "" {
+		h.errorpage(c, http.StatusBadRequest, nil)
 		return
 	}
 
-	resultInsertionNumber, err := h.services.CreateUser(user)
-	if err != nil {
-		log.Fatal(err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	data.ErrMsgs = validator.GetErrMsgs(form)
+	if len(data.ErrMsgs) != 0 {
+		h.TemplateRender(c, http.StatusUnprocessableEntity, "sign-up.html", data)
 		return
 	}
 
-	c.JSON(http.StatusOK, resultInsertionNumber)
+	if err := h.services.SignUp(form); err != nil {
+		switch err {
+		case models.ErrDuplicateEmail:
+			data.ErrMsgs["email"] = validator.MsgEmailExists
+		case models.ErrDuplicateName:
+			data.ErrMsgs["name"] = validator.MsgNameExists
+		default:
+			c.Error(err)
+			h.errorpage(c, http.StatusInternalServerError, err)
+			return
+		}
+		h.TemplateRender(c, http.StatusConflict, "sign-up.html", data)
+		return
+	}
+
+	c.Redirect(http.StatusSeeOther, "/sign-in")
 }
 
 func (h *Handler) SignIn(c *gin.Context) {
-	var user models.User
+	var form models.User
 
-	if err := c.BindJSON(&user); err != nil {
+	if err := c.ShouldBind(&form); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	foundUser, err := h.services.GetUserByEmail(user.Email, user.Password)
+	data := c.MustGet("data").(*Data)
+	fmt.Println(form)
+	data.Content = form
 
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	if form.Email == "" || form.Password == "" {
+		h.errorpage(c, http.StatusBadRequest, nil)
 		return
 	}
-	c.JSON(http.StatusOK, foundUser)
+
+	user, err := h.services.SignIn(form.Email, form.Password)
+	if err != nil {
+		data.ErrMsgs = make(map[string]string)
+		switch err {
+		case models.ErrNoRecord:
+			data.ErrMsgs["login"] = validator.MsgUserNotFound
+		case models.ErrInvalidCredentials:
+			data.ErrMsgs["password"] = validator.MsgNotCorrectPassword
+		default:
+			c.Error(err)
+			h.errorpage(c, http.StatusInternalServerError, err)
+			return
+		}
+		h.TemplateRender(c, http.StatusUnauthorized, "sign-in.html", data)
+		return
+	}
+
+	cookie := &http.Cookie{
+		Name:  "session",
+		Value: *user.Token,
+		Path:  "/",
+	}
+	c.SetCookie(cookie.Name, cookie.Value, 0, cookie.Path, cookie.Domain, false, false)
+
+	c.Redirect(http.StatusSeeOther, "/")
+}
+
+func (h *Handler) SignOut(c *gin.Context) {
+	data := c.MustGet("data").(*Data)
+
+	if data.User.Email == "" && data.User.First_name == "" && len(data.User.AccessibleVideos) == 0 {
+		h.errorpage(c, http.StatusUnauthorized, nil)
+		return
+	}
+
+	err := h.services.LogOut(*data.User.Token)
+	if err != nil {
+		c.Error(err)
+		h.errorpage(c, http.StatusInternalServerError, err)
+		return
+	}
+
+	c.Redirect(http.StatusSeeOther, "/")
 }
