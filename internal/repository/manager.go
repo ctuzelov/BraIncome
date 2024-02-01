@@ -7,9 +7,6 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-type Authorization interface {
-}
-
 type Authentication interface {
 	InsertUser(models.User) error
 	UserByEmail(email string) (models.User, error)
@@ -21,12 +18,11 @@ type Authentication interface {
 }
 
 type Repository struct {
-	Authorization
 	Authentication
 }
 
 func NewRepository(db *mongo.Client) *Repository {
 	return &Repository{
-		Authorization: NewAuthMongo(db),
+		Authentication: NewAuthMongo(db),
 	}
 }
