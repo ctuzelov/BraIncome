@@ -20,14 +20,21 @@ func (h *Handler) SignInPage(c *gin.Context) {
 }
 
 func (h *Handler) SignUp(c *gin.Context) {
-	rawJSON, _ := c.GetRawData()
-	fmt.Println(string(rawJSON))
-	var form models.User
+	c.Request.ParseForm()
 
-	if err := c.ShouldBindJSON(&form); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
+	rawJson, _ := c.GetRawData()
+	fmt.Println(rawJson, "raw data")
+
+	firstName := c.Request.PostForm.Get("first_name")
+	lastName := c.Request.PostForm.Get("last_name")
+	email := c.Request.PostForm.Get("email")
+	password := c.Request.PostForm.Get("password")
+	// Create a User instance with form data
+	var form models.User
+	form.First_name = firstName
+	form.Last_name = lastName
+	form.Email = email
+	form.Password = password
 	fmt.Println(form.Email, form.First_name, form.Last_name, form.Password)
 
 	data := c.MustGet("data").(*Data)
@@ -38,11 +45,11 @@ func (h *Handler) SignUp(c *gin.Context) {
 		return
 	}
 
-	data.ErrMsgs = validator.GetErrMsgs(form)
-	if len(data.ErrMsgs) != 0 {
-		h.TemplateRender(c, http.StatusUnprocessableEntity, "sign-up.html", data)
-		return
-	}
+	// data.ErrMsgs = validator.GetErrMsgs(form)
+	// if len(data.ErrMsgs) != 0 {
+	// 	h.TemplateRender(c, http.StatusUnprocessableEntity, "sign-up.html", data)
+	// 	return
+	// }
 
 	if err := h.services.SignUp(form); err != nil {
 		switch err {
@@ -63,15 +70,20 @@ func (h *Handler) SignUp(c *gin.Context) {
 }
 
 func (h *Handler) SignIn(c *gin.Context) {
-	var form models.User
+	c.Request.ParseForm()
 
-	if err := c.ShouldBind(&form); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
+	firstName := c.Request.PostForm.Get("first_name")
+	lastName := c.Request.PostForm.Get("last_name")
+	email := c.Request.PostForm.Get("email")
+	password := c.Request.PostForm.Get("password")
+	// Create a User instance with form data
+	var form models.User
+	form.First_name = firstName
+	form.Last_name = lastName
+	form.Email = email
+	form.Password = password
 
 	data := c.MustGet("data").(*Data)
-	fmt.Println(form)
 	data.Content = form
 
 	if form.Email == "" || form.Password == "" {
@@ -92,7 +104,7 @@ func (h *Handler) SignIn(c *gin.Context) {
 			h.errorpage(c, http.StatusInternalServerError, err)
 			return
 		}
-		h.TemplateRender(c, http.StatusUnauthorized, "sign-in.html", data)
+		h.TemplateRender(c, http.StatusUnauthorized, "index.html", data)
 		return
 	}
 
@@ -109,7 +121,7 @@ func (h *Handler) SignIn(c *gin.Context) {
 func (h *Handler) SignOut(c *gin.Context) {
 	data := c.MustGet("data").(*Data)
 
-	if data.User.Email == "" && data.User.First_name == "" && len(data.User.AccessibleVideos) == 0 {
+	if data.User.Email == "" && data.User.First_name == "" {
 		h.errorpage(c, http.StatusUnauthorized, nil)
 		return
 	}
