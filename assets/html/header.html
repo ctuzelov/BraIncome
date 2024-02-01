@@ -20,7 +20,7 @@
 
           {{if .IsAuthorized}}
           <li class="menu-item menu-item menu-item-has-children">
-            <a href="#" class="js-toggle-sub-menu">{{ .User.First_name }}<i class="fas fa-chevron-down"></i></a>
+            <a href="#" class="js-toggle-sub-menu">{{ .User.First_name }} {{ .User.Last_name }}<i class="fas fa-chevron-down"></i></a>
             <ul class="sub-menu js-sub-menu">
               <li class="sub-menu-item"><a href="/my-profile">My profile</a></li>
               <li class="sub-menu-item"><a href="/sign-out">Log out</a></li>
