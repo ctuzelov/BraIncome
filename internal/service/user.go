@@ -20,6 +20,7 @@ func NewUserInfo(repo repository.Authentication) *UserInfo {
 
 func (u *UserInfo) SignUp(m models.User) error {
 	user, err := u.repo.UserByEmail(m.Email)
+
 	if err != nil && !errors.Is(err, models.ErrNoRecord) {
 		return fmt.Errorf("user_info - signup #1: %w", err)
 	}
@@ -72,7 +73,6 @@ func (u *UserInfo) SignIn(login, password string) (models.User, error) {
 }
 
 func (u *UserInfo) GetByToken(token string) (models.User, error) {
-	fmt.Println(token)
 	return u.repo.UserByToken(token)
 }
 
