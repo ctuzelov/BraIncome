@@ -22,9 +22,11 @@ func (h *Handler) Middleware(c *gin.Context) {
 			c.Abort()
 			return
 		}
+
 		if data.User.Token != nil {
 			data.IsAuthorized = true
 		}
+
 	default:
 		h.errorpage(c, http.StatusInternalServerError, err)
 		c.Abort()
