@@ -24,6 +24,8 @@ func (r *AuthMongo) InsertUser(m models.User) error {
 
 	defer cancel()
 
+	m.ID = primitive.NewObjectID()
+
 	// Insert the user document into the MongoDB collection
 	_, err := collection.InsertOne(ctx, m)
 	if err != nil {
@@ -154,69 +156,3 @@ func (r *AuthMongo) RemoveToken(token string) error {
 	_, err := collection.UpdateOne(ctx, filter, update)
 	return err
 }
-
-// func (r *AuthMongo) UpdateAllTokens(signedToken string, signedRefreshToken string, userId string) {
-// 	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Second)
-
-// 	UserCollection := r.db.Database("cluster0").Collection("user")
-
-// 	var updateObj primitive.D
-
-// 	updateObj = append(updateObj, bson.E{Key: "token", Value: signedToken})
-// 	updateObj = append(updateObj, bson.E{Key: "refresh_token", Value: signedRefreshToken})
-
-// 	Updated_at, _ := time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
-// 	updateObj = append(updateObj, bson.E{Key: "updated_at", Value: Updated_at})
-
-// 	upsert := true
-// 	filter := bson.M{"user_id": userId}
-// 	opt := options.UpdateOptions{
-// 		Upsert: &upsert,
-// 	}
-
-// 	_, err := UserCollection.UpdateOne(
-// 		ctx,
-// 		filter,
-// 		bson.D{
-// 			{Key: "$set", Value: updateObj},
-// 		},
-// 		&opt,
-// 	)
-
-// 	defer cancel()
-
-// 	if err != nil {
-// 		log.Fatal(err)
-// 		return
-// 	}
-// }
-
-// func (r *AuthMongo) SetUserId(foundUser *models.User) {
-// 	var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
-
-// 	UserCollection := r.db.Database("cluster0").Collection("user")
-
-// 	UserCollection.FindOne(ctx, bson.M{"user_id": foundUser.User_id}).Decode(&foundUser)
-
-// 	defer cancel()
-// }
-
-// func (r *AuthMongo) FindEmail(email string) (models.User, error) {
-// 	var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
-
-// 	UserCollection := r.db.Database("cluster0").Collection("user")
-
-// 	var foundUser models.User
-
-// 	err := UserCollection.FindOne(ctx, bson.M{"email": email}).Decode(&foundUser)
-// 	defer cancel()
-// 	if err != nil {
-// 		return models.User{}, err
-// 	}
-
-// 	if foundUser.Email == "" {
-// 		return models.User{}, fmt.Errorf(validator.MsgUserNotFound)
-// 	}
-
-// 	return foundUser, nil
-// }
