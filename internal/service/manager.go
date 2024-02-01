@@ -5,9 +5,6 @@ import (
 	"braincome/internal/repository"
 )
 
-type Authorization interface {
-}
-
 type User interface {
 	SignUp(models.User) error
 	SignIn(login, password string) (models.User, error)
@@ -16,7 +13,6 @@ type User interface {
 }
 
 type Service struct {
-	Authorization
 	User
 }
 
