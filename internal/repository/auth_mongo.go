@@ -3,6 +3,7 @@ package repository
 import (
 	"braincome/internal/models"
 	"context"
+	"fmt"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -30,6 +31,61 @@ func (r *AuthMongo) InsertUser(m models.User) error {
 	_, err := collection.InsertOne(ctx, m)
 	if err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func (r *AuthMongo) SetToken(id primitive.ObjectID, token string) error {
+	var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
+	collection := r.db.Database("cluster0").Collection("user")
+	defer cancel()
+
+	// Define the filter to update the user by ID
+	filter := bson.M{"_id": id}
+
+	// Define the update to set the token and expiration time
+	update := bson.M{
+		"$set": bson.M{
+			"token":   token,
+			"expires": time.Now().Add(8 * time.Hour),
+		},
+	}
+
+	// Update the user in the MongoDB collection
+	_, err := collection.UpdateOne(ctx, filter, update)
+	return err
+}
+
+func (r *AuthMongo) RemoveToken(token string) error {
+	var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
+	collection := r.db.Database("cluster0").Collection("user")
+	defer cancel()
+
+	// Define the filter to find the user by token
+	filter := bson.M{"token": token}
+
+	// Define the update to remove the token
+	update := bson.M{"$set": bson.M{"token": nil}}
+
+	// Update the user in the MongoDB collection
+	_, err := collection.UpdateOne(ctx, filter, update)
+	return err
+}
+
+func (r *AuthMongo) SwitchRole(email string) error {
+	var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
+	collection := r.db.Database("cluster0").Collection("user")
+	defer cancel()
+
+	filter := bson.M{"email": email}
+
+	update := bson.M{"$set": bson.M{"user_type": "ADMIN"}}
+
+	_, err := collection.UpdateOne(ctx, filter, update)
+
+	if err != nil {
+		return fmt.Errorf("error in updating the role")
 	}
 
 	return nil
@@ -118,41 +174,4 @@ func (r *AuthMongo) UserById(id primitive.ObjectID) (models.User, error) {
 	}
 
 	return user, nil
-}
-
-func (r *AuthMongo) SetToken(id primitive.ObjectID, token string) error {
-	var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
-	collection := r.db.Database("cluster0").Collection("user")
-	defer cancel()
-
-	// Define the filter to update the user by ID
-	filter := bson.M{"_id": id}
-
-	// Define the update to set the token and expiration time
-	update := bson.M{
-		"$set": bson.M{
-			"token":   token,
-			"expires": time.Now().Add(8 * time.Hour),
-		},
-	}
-
-	// Update the user in the MongoDB collection
-	_, err := collection.UpdateOne(ctx, filter, update)
-	return err
-}
-
-func (r *AuthMongo) RemoveToken(token string) error {
-	var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
-	collection := r.db.Database("cluster0").Collection("user")
-	defer cancel()
-
-	// Define the filter to find the user by token
-	filter := bson.M{"token": token}
-
-	// Define the update to remove the token
-	update := bson.M{"$set": bson.M{"token": nil}}
-
-	// Update the user in the MongoDB collection
-	_, err := collection.UpdateOne(ctx, filter, update)
-	return err
 }
