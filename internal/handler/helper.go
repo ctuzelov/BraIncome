@@ -12,6 +12,7 @@ type Data struct {
 	Content      any
 	IsAuthorized bool
 	IsEmpty      bool
+	IsAdmin      bool
 	ErrMsgs      map[string]string
 	Categories   []*string
 }
