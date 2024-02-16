@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title> Publish a course </title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/assets/css/font-awesome.css">
+  <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/assets/css/style.css">
+  <link rel="stylesheet" href="/assets/css/responsive.css">
+  <link rel="stylesheet" class="js-color-style" href="/assets/css/colors/color-1.css">
+  <link rel="stylesheet" class="js-glass-style" href="/assets/css/glass.css" disabled>
+</head>
+<body>
+
+  <!-- page loader start -->
+  <div class="page-loader js-page-loader">
+    <div></div>
+  </div>
+  <!-- page loader end -->
+    
+    <!--main warpper start-->
+<div class="main-wrapper">
+
+  <!-- header start-- -->
+  {{ template "header" .}}
+  <!-- header end-- -->
+
+      <!-- breadcrumb start -->
+      <div class="breadcrumb-nav">
+        <div class="container">
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+              <li class="breadcrumb-item"><a href="/index">Home</a></li>
+              <li class="breadcrumb-item active" aria-current="page">Contact</li>
+            </ol>
+          </nav>
+        </div>
+      </div>
+      <!-- breadcrumb end -->
+
+      <!-- contact section start -->
+      <section class="contact-section section-padding">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="contact-form box">
+                <h2 class="form-title text-center">Leave a Message</h2>
+                <form action="">
+                  <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Name">
+                  </div>
+                  <div class="form-group">
+                    <input type="email" class="form-control" placeholder="Email">
+                  </div>
+                  <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Phone">
+                  </div>
+                  <div class="form-group">
+                    <textarea class="form-control" placeholder="Message"></textarea>
+                  </div>
+                  <button type="submit" class="btn btn-block btn-theme btn-form">Submit Message</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- contact section end -->
+
+
+
+  <!-- footer start -->
+  {{ template "footer" .}}
+  <!-- footer end -->
+
+</div>
+    <!--main warpper end-->
+
+
+
+
+
+
+<!-- style switcher start -->
+{{ template "style-switcher" }}
+<!-- style switcher end -->
+
+
+
+
+<script src="/assets/js/bootstrap.bundle.min.js"></script>  
+<script src="/assets/js/main.js"></script>
+</body>
+</html>

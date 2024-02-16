@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="/assets/css/responsive.css">
   <link rel="stylesheet" class="js-color-style" href="/assets/css/colors/color-1.css">
   <link rel="stylesheet" class="js-glass-style" href="/assets/css/glass.css" disabled>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 </head>
 <body>
     
@@ -32,7 +33,7 @@
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb mb-0">
             <li class="breadcrumb-item"><a href="/">Home</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Log In</li>
+            <li class="breadcrumb-item active" aria-current="page">Login</li>
           </ol>
         </nav>
       </div>
@@ -46,7 +47,23 @@
           <div class="row justify-content-center">
             <div class="col-md-7 col-lg-6 col-xl-5">
               <div class="login-form box">
-                <h2 class="form-title text-center">Log In to Your Account</h2>
+                <h2 class="form-title text-center" style="margin-bottom: 18px">Log In</h2>
+
+                <!-- Add login with Google button -->
+                <div class="social-container" style="justify-content: center; text-align: center">
+                  <a href="#" class="social">
+                      <img src="/assets/img/1534129544.png" alt="Google Logo" style="width: 32px; height: 32px;">
+                  </a>
+                  <a href="#" class="social">
+                      <img src="/assets/img/Facebook_circle_pictogram.svg.png" alt="Facebook Logo" style="width: 32px; height: 32px;">
+                  </a>
+                </div>
+              
+
+                <div style="justify-content: center; text-align: center;/*! justify-content: center; */margin: 10px 10px 10px;">or use your account</div>
+
+                <!-- Regular email/password login form -->
+
                 <form action="/sign-in" method="post">
                   <div class="form-group">
                     <input type="text" class="form-control" name="email" placeholder="Email" required>
