@@ -15,6 +15,7 @@ type Authentication interface {
 	UserById(id primitive.ObjectID) (models.User, error)
 	SetToken(id primitive.ObjectID, token string) error
 	RemoveToken(token string) error
+	SwitchRole(token string) error
 }
 
 type Repository struct {
