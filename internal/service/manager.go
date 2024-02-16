@@ -10,6 +10,7 @@ type User interface {
 	SignIn(login, password string) (models.User, error)
 	GetByToken(token string) (models.User, error)
 	LogOut(token string) error
+	MakeAdmin(email string) error
 }
 
 type Service struct {
@@ -18,6 +19,6 @@ type Service struct {
 
 func NewService(repo *repository.Repository) *Service {
 	return &Service{
-		User: NewUserInfo(repo.Authentication),
+		User: NewAuthService(repo.Authentication),
 	}
 }
