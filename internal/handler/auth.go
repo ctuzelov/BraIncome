@@ -45,11 +45,11 @@ func (h *Handler) SignUp(c *gin.Context) {
 		return
 	}
 
-	// data.ErrMsgs = validator.GetErrMsgs(form)
-	// if len(data.ErrMsgs) != 0 {
-	// 	h.TemplateRender(c, http.StatusUnprocessableEntity, "sign-up.html", data)
-	// 	return
-	// }
+	data.ErrMsgs = validator.GetErrMsgs(form)
+	if len(data.ErrMsgs) != 0 {
+		h.TemplateRender(c, http.StatusUnprocessableEntity, "sign-up.html", data)
+		return
+	}
 
 	if err := h.services.SignUp(form); err != nil {
 		switch err {
@@ -96,15 +96,16 @@ func (h *Handler) SignIn(c *gin.Context) {
 		data.ErrMsgs = make(map[string]string)
 		switch err {
 		case models.ErrNoRecord:
-			data.ErrMsgs["login"] = validator.MsgUserNotFound
+			data.ErrMsgs["email"] = validator.MsgUserNotFound
 		case models.ErrInvalidCredentials:
 			data.ErrMsgs["password"] = validator.MsgNotCorrectPassword
+			fmt.Println("wrong password")
 		default:
 			c.Error(err)
 			h.errorpage(c, http.StatusInternalServerError, err)
 			return
 		}
-		h.TemplateRender(c, http.StatusUnauthorized, "index.html", data)
+		h.TemplateRender(c, http.StatusUnauthorized, "log-in.html", data)
 		return
 	}
 
