@@ -15,5 +15,5 @@ type User struct {
 	Token      *string            `json:"token"`
 	User_type  string             `json:"user_type" validate:"required,eq=ADMIN|eq=USER"`
 	Expires    *time.Time         `bson:"expires" json:"expires"`
-	// AccessibleVideos []string           `json:"accessible_videos"`
+	// AccessibleVideos map[string]bool           `json:"accessible_videos"`
 }
