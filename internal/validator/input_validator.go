@@ -4,6 +4,7 @@ import (
 	"braincome/internal/models"
 	"net/mail"
 	"regexp"
+	"unicode"
 	"unicode/utf8"
 )
 
@@ -12,8 +13,8 @@ const (
 	MsgEmailExists        = "email already exists"
 	MsgNameExists         = "name already exists"
 	MsgInvalidEmail       = "write correct email"
-	MsgInvalidName        = "write correct name. Username should start with an alphabet [A-Za-z] and all other characters can be alphabets, numbers or an underscore so, [A-Za-z0-9_]. The username consists of 5 to 15 characters inclusive."
-	MsgInvalidLastName    = "write correct name. Username should start with an alphabet [A-Za-z] and all other characters can be alphabets, numbers or an underscore so, [A-Za-z0-9_]. The username consists of 5 to 15 characters inclusive."
+	MsgInvalidFirstName   = "name must consist only of English letters."
+	MsgInvalidLastName    = "name must consist only of English letters."
 	MsgInvalidPass        = "password must contain letters, numbers and must be at least 6 characters."
 	MsgUserNotFound       = "user not found"
 	MsgPassDontMatch      = "the passwords don't match"
@@ -26,10 +27,10 @@ func GetErrMsgs(m models.User) map[string]string {
 		errmsgs["email"] = MsgInvalidEmail
 	}
 	if !isValidName(m.First_name) {
-		errmsgs["name"] = MsgInvalidName
+		errmsgs["first_name"] = MsgInvalidFirstName
 	}
 	if !isValidName(m.Last_name) {
-		errmsgs["name"] = MsgInvalidLastName
+		errmsgs["last_name"] = MsgInvalidLastName
 	}
 	if !isValidPassword(m.Password) {
 		errmsgs["pass"] = MsgInvalidPass
@@ -48,12 +49,16 @@ func isValidEmail(email string) bool {
 
 func isValidName(name string) bool {
 	length := utf8.RuneCountInString(name)
-	if length < 5 || length > 15 {
+	if length < 1 || length > 15 {
 		return false
 	}
-	usernameConvention := "^[A-Za-z][A-Za-z0-9_]{4,14}$"
-	re, _ := regexp.Compile(usernameConvention)
-	return re.MatchString(name)
+	for _, char := range name {
+		if !unicode.IsLetter(char) {
+			return false
+		}
+	}
+
+	return true
 }
 
 func isValidPassword(pass string) bool {
