@@ -4,10 +4,8 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-var salt = []byte("Che_problema???_Ya_problema!!!")
-
 func Encrypt(password string) (string, error) {
-	crypted, err := bcrypt.GenerateFromPassword(append([]byte(password), salt...), 3)
+	crypted, err := bcrypt.GenerateFromPassword([]byte(password), 3)
 	return string(crypted), err
 }
 
