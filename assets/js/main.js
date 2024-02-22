@@ -51,6 +51,81 @@ function coursePreviewVideo(){
 
 coursePreviewVideo();
 
+function addModule() {
+    var modulesContainer = document.getElementById("modulesContainer");
+
+    // Count the number of existing modules
+    var moduleIndex = modulesContainer.children.length;
+
+    // Module Container
+    var moduleDiv = document.createElement("div");
+    moduleDiv.classList.add("module");
+
+    // Module Name
+    var moduleNameInput = document.createElement("input");
+    moduleNameInput.type = "text";
+    moduleNameInput.name = `modules[${moduleIndex}][name]`;
+    moduleNameInput.placeholder = "Module Name";
+    moduleDiv.appendChild(moduleNameInput);
+
+    // Lessons Container
+    var lessonsContainer = document.createElement("div");
+    lessonsContainer.classList.add("lessons");
+    moduleDiv.appendChild(lessonsContainer);
+
+    // Add initial lesson fields
+    addLesson(lessonsContainer, moduleIndex);
+
+    // Add Lesson Button
+    var addLessonBtn = document.createElement("button");
+    addLessonBtn.type = "button";
+    addLessonBtn.textContent = "Add Lesson";
+    addLessonBtn.onclick = function () {
+        addLesson(lessonsContainer, moduleIndex);
+    };
+    moduleDiv.appendChild(addLessonBtn);
+
+    // Append To Container
+    modulesContainer.appendChild(moduleDiv);
+}
+
+function addLesson(container, moduleIndex) {
+    var moduleDiv = container.parentElement;
+    var lessonIndex = container.querySelectorAll(".lesson").length;
+
+    var lessonDiv = document.createElement("div");
+    lessonDiv.classList.add("lesson");
+
+    var nameInput = document.createElement("input");
+    nameInput.type = "text";
+    nameInput.name = `modules[${moduleIndex}][lessons][${lessonIndex}][name]`;
+    nameInput.placeholder = "Lesson Name";
+    lessonDiv.appendChild(nameInput);
+
+    var linkInput = document.createElement("input");
+    linkInput.type = "text";
+    linkInput.name = `modules[${moduleIndex}][lessons][${lessonIndex}][link]`;
+    linkInput.placeholder = "Lesson Link";
+    lessonDiv.appendChild(linkInput);
+
+    container.appendChild(lessonDiv);
+}
+
+function submitForm() {
+    var formData = new FormData(document.getElementById("courseForm"));
+    var serializedData = new URLSearchParams(formData).toString();
+
+    // Using a traditional form submission for demonstration
+    document.getElementById("courseForm").submit(); 
+}
+
+  function SetHeaderContentType() {
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', '/publish', true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.send(JSON.stringify(formData));
+  }
+
 /*--------------------------------------------
     header menu
 -------------------------------------------*/

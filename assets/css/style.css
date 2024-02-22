@@ -1234,3 +1234,14 @@ textarea.form-control{
     justify-content: center;
     margin-bottom: 16px; /* Adjust as needed */
 }
+
+.module {
+    margin-top: 30px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    padding: 10px;
+}
+
+.lesson {
+    margin-bottom: 10px;
+}
