@@ -40,7 +40,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	router.GET("/sign-out", h.SignOut)
 
 	router.GET("/my-profile", h.MyProfile).Use(h.RequireAuth)
-	router.GET("/publish", h.Publish).Use(h.IsAdminMiddleware)
+	router.GET("/publish", h.PublishPage).Use(h.IsAdminMiddleware)
 	router.POST("/publish", h.Publish).Use(h.IsAdminMiddleware)
 	router.GET("/grant-admin-privileges", h.GrantAdminPrivileges)
 
