@@ -13,6 +13,7 @@ func (h *Handler) ContactPage(c *gin.Context) {
 	h.TemplateRender(c, http.StatusOK, "contact.html", data)
 }
 
-func (h *Handler) Contact(c *gin.Context) {
-	h.TemplateRender(c, http.StatusOK, "contact.html", nil)
+func (h *Handler) ContactFormHandler(c *gin.Context) {
+	data := c.MustGet("data").(*Data)
+	h.TemplateRender(c, http.StatusOK, "contact.html", data)
 }
