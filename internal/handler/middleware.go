@@ -37,30 +37,6 @@ func (h *Handler) Middleware(c *gin.Context) {
 	c.Next()
 }
 
-func (h *Handler) RequireAuth(c *gin.Context) {
-	data, ok := c.Get("data")
-	if !ok {
-		h.errorpage(c, http.StatusInternalServerError, errors.New("context value not found"))
-		c.Abort()
-		return
-	}
-
-	userData, ok := data.(*Data)
-	if !ok {
-		h.errorpage(c, http.StatusInternalServerError, errors.New("unexpected data type in context"))
-		c.Abort()
-		return
-	}
-
-	if !userData.IsAuthorized {
-		c.Redirect(http.StatusSeeOther, "/signin")
-		c.Abort()
-		return
-	}
-
-	c.Next()
-}
-
 func (h *Handler) IsAdminMiddleware(c *gin.Context) {
 	cookie, err := c.Request.Cookie("session")
 	data := &Data{}
@@ -73,6 +49,14 @@ func (h *Handler) IsAdminMiddleware(c *gin.Context) {
 		if err != nil && !errors.Is(err, models.ErrNoRecord) {
 			h.errorpage(c, http.StatusInternalServerError, err)
 			c.Abort()
+			return
+		}
+
+		if data.User.Token != nil {
+			data.IsAuthorized = true
+		}
+
+		if data.User == (models.User{}) {
 			return
 		}
 
