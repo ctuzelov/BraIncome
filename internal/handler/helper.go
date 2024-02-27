@@ -2,7 +2,9 @@ package handler
 
 import (
 	"braincome/internal/models"
+	"fmt"
 	"net/http"
+	"regexp"
 
 	"github.com/gin-gonic/gin"
 )
@@ -31,4 +33,18 @@ func (h *Handler) errorpage(c *gin.Context, status int, err error) {
 	errdata := ErrorData{Status: status, Message: msg}
 
 	h.TemplateRender(c, status, "errors.html", errdata)
+}
+
+func ExtractPhotoID(url string) string {
+	// Regular expression to extract the PhotoID
+	re := regexp.MustCompile(`\/d\/([a-zA-Z0-9_-]+)\/`)
+	matches := re.FindStringSubmatch(url)
+	if len(matches) < 2 {
+		return "" // Return empty string if no match found
+	}
+	return matches[1]
+}
+
+func GenerateThumbnailURL(photoID string) string {
+	return fmt.Sprintf("https://drive.google.com/thumbnail?id=%s&sz=w1000", photoID)
 }
