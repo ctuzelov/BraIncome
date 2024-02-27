@@ -33,7 +33,7 @@
           <ol class="breadcrumb mb-0">
             <li class="breadcrumb-item"><a href="/">Home</a></li>
             <li class="breadcrumb-item"><a href="/courses">Courses</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Courses details</li>
+            <li class="breadcrumb-item active" aria-current="page">{{.Content.Title}}</li>
           </ol>
         </nav>
       </div>
@@ -47,9 +47,9 @@
           <div class="col-lg-8">
             <!-- course header start -->
             <div class="course-header box">
-              <h2 class="text-capitalize">.Title</h2>
+              <h2 class="text-capitalize"> {{.Content.Title}}</h2>
               <div class="rating">
-                <span class="average-rating">.Rating</span>
+                <span class="average-rating"> {{.Content.Rating}}</span>
                 <span class="average-stars">
                   <i class="fas fa-star"></i>
                   <i class="fas fa-star"></i>
@@ -57,16 +57,13 @@
                   <i class="fas fa-star"></i>
                   <i class="fas fa-star-half-alt"></i>
                 </span>
-                <video controls>
-                  <iframe width="560" height="315" src="https://www.youtube.com/embed/Ww35fN_Iu-U" frameborder="0" allowfullscreen></iframe>
-                  <span class="reviews">{{ .Content.Reviews }}</span>
-              </video>
+                <span class="reviews">{{ .Content.Reviews }}</span>
               </div>
               <ul>
-                <li>enrolled students - <span>.StudentsAmount</span></li>
-                <li>created by - <span><a href="#">.CreatedBy</a></span></li>
-                <li>last updated - <span>.Updated</span></li>
-                <li>language - <span>.Language</span></li>
+                <li>Enrolled students - <span>{{.Content.Enrolled}}</span></li>
+                <li>Created by - <span>{{.Content.Instructor.First_name}} {{.Content.Instructor.Last_name}}</a></span></li>
+                <li>Last updated - <span>{{.Content.LastUpdated.Format "2006-01-02 15:04:05"}}</span></li>
+                <li>Language - <span>{{.Content.Language}}</span></li>
               </ul>
             </div>
             <!-- course header end -->
@@ -98,7 +95,7 @@
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="heading-{{ $index }}">
                                 <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-{{ $index }}" aria-expanded="true" aria-controls="collapse-{{ $index }}">
-                                    {{ $module.Title }} <span>{{ len $module.Lessons }} lessons | {{ $module.Duration }}</span>
+                                    {{ $module.Name }} <span>{{ len $module.Lessons }}</span>
                                 </button>
                             </h2>
                             <div id="collapse-{{ $index }}" class="accordion-collapse collapse show" aria-labelledby="heading-{{ $index }}" data-bs-parent="#accordion">
@@ -109,9 +106,9 @@
                                             <i class="fas fa-play-circle"></i>
                                             <video controls>
                                                 <source src="{{ $lesson.Link }}" type="video/mp4">
-                                                <span>{{ $lesson.Title }}</span>
+                                                <span>{{ $lesson.Name }}</span>
                                             </video>
-                                            <span>{{ $lesson.Duration }}</span>
+                                            
                                         </li>
                                         {{ end }}
                                     </ul>
