@@ -44,6 +44,10 @@ func (h *Handler) Course(c *gin.Context) {
 	courseID := c.Param("id")
 
 	objectID, err := primitive.ObjectIDFromHex(courseID)
+
+	if err != nil {
+		h.errorpage(c, http.StatusBadRequest, err)
+	}
 	// Retrieve the course from the database
 	course, err := h.services.Courses.GetById(objectID)
 
