@@ -65,6 +65,7 @@ function addModule() {
     var moduleNameInput = document.createElement("input");
     moduleNameInput.type = "text";
     moduleNameInput.name = `modules[${moduleIndex}][name]`;
+    moduleNameInput.setAttribute("class", "form-control mb-2");
     moduleNameInput.placeholder = "Module Name";
     moduleDiv.appendChild(moduleNameInput);
 
@@ -79,6 +80,7 @@ function addModule() {
     // Add Lesson Button
     var addLessonBtn = document.createElement("button");
     addLessonBtn.type = "button";
+    addLessonBtn.setAttribute("class", "btn btn-info btn-sm mt-2");
     addLessonBtn.textContent = "Add Lesson";
     addLessonBtn.onclick = function () {
         addLesson(lessonsContainer, moduleIndex);
@@ -99,12 +101,14 @@ function addLesson(container, moduleIndex) {
     var nameInput = document.createElement("input");
     nameInput.type = "text";
     nameInput.name = `modules[${moduleIndex}][lessons][${lessonIndex}][name]`;
+    nameInput.setAttribute("class", "form-control lesson");
     nameInput.placeholder = "Lesson Name";
     lessonDiv.appendChild(nameInput);
 
     var linkInput = document.createElement("input");
     linkInput.type = "text";
     linkInput.name = `modules[${moduleIndex}][lessons][${lessonIndex}][link]`;
+    linkInput.setAttribute("class", "form-control lesson");
     linkInput.placeholder = "Lesson Link";
     lessonDiv.appendChild(linkInput);
 
@@ -125,6 +129,8 @@ function submitForm() {
     xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.send(JSON.stringify(formData));
   }
+
+  
 
 /*--------------------------------------------
     header menu
