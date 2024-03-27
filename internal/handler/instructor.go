@@ -18,7 +18,7 @@ func (h *Handler) AddInstructor(c *gin.Context) {
 	userForm.Email = c.Request.PostForm.Get("email")
 	userForm.About = c.Request.PostForm.Get("about")
 	userForm.Speciality = c.Request.PostForm.Get("speciality")
-	userForm.AvatarLink = c.Request.PostForm.Get("avatar_link")
+	userForm.AvatarLink = GenerateThumbnailURL(ExtractPhotoID(c.Request.PostForm.Get("avatar_link")))
 
 	// TODO: clarify the method and add validation for userForm
 	_, err := h.services.Instructor.GetByEmail(userForm.Email)

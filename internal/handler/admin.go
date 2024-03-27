@@ -26,6 +26,27 @@ type CourseForm struct {
 	Modules        []models.Module `form:"modules[]"`
 }
 
+type Lesson struct {
+	Name string `json:"name"`
+	Link string `json:"link"`
+}
+
+type Module struct {
+	Name    string   `json:"name"`
+	Lessons []Lesson `json:"lessons"`
+}
+
+type Course_Form struct {
+	FullName       string   `json:"fullName"`
+	Email          string   `json:"email"`
+	Title          string   `json:"title"`
+	Description    string   `json:"description"`
+	Categories     []string `json:"categories"`
+	Language       string   `json:"language"`
+	CoverPhotoLink string   `json:"coverPhotoLink"`
+	Modules        []Module `json:"modules"`
+}
+
 func (h *Handler) CourseFormHandler(c *gin.Context) {
 	body, _ := c.GetRawData()
 
@@ -37,6 +58,7 @@ func (h *Handler) CourseFormHandler(c *gin.Context) {
 
 	// Create a CourseForm struct and populate it with the decoded form data
 	var courseForm CourseForm
+
 	courseForm.FullName = formData.Get("fullName")
 	courseForm.Email = formData.Get("email")
 	courseForm.Title = formData.Get("title")

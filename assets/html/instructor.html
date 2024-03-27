@@ -1,0 +1,30 @@
+{{ define "instructor" }}
+
+<div class="tab-pane fade" id="course-instructor" role="tabpanel" aria-labelledby="course-instructor-tab">
+    <div class="course-instructor box">
+      <h3 class="mb-3 text-capitalize
+      "></h3>
+      <div class="instructor-details">
+        <div class="details-wrap d-flex align-items-center flex-wrap">
+          <div class="left-box me-4">
+            <div class="img-box">
+              <img src="{{ .Content.Instructor.AvatarLink }}" class="rounded-circle" alt="instructor img">
+            </div>
+          </div>
+          <div class="right-box">
+            <h4> {{ .Content.Instructor.First_name}} {{ .Content.Instructor.Last_name}} <span>({{ .Content.Instructor.Speciality }})</span></h4>
+            <ul>
+              <li><i class="fas fa-star"></i>{{ .Content.Instructor.Rating }}</li>
+              <li><i class="fas fa-play-circle"></i> {{ .Content.Instructor.Courses }} </li>
+              <li><i class="fas fa-certificate"></i> {{ .Content.Instructor.TotalReviews }} </li>
+            </ul>
+          </div>
+        </div>
+        <div class="text">
+          <p class="mb-0">{{ .Content.Instructor.About }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{{ end }}
