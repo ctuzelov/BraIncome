@@ -53,47 +53,38 @@ coursePreviewVideo();
 
 function addModule() {
     var modulesContainer = document.getElementById("modulesContainer");
-
-    // Count the number of existing modules
     var moduleIndex = modulesContainer.children.length;
 
-    // Module Container
     var moduleDiv = document.createElement("div");
     moduleDiv.classList.add("module");
 
-    // Module Name
     var moduleNameInput = document.createElement("input");
     moduleNameInput.type = "text";
     moduleNameInput.name = `modules[${moduleIndex}][name]`;
-    moduleNameInput.setAttribute("class", "form-control mb-2");
+    moduleNameInput.classList.add("form-control", "mb-2");
     moduleNameInput.placeholder = "Module Name";
     moduleDiv.appendChild(moduleNameInput);
 
-    // Lessons Container
     var lessonsContainer = document.createElement("div");
     lessonsContainer.classList.add("lessons");
     moduleDiv.appendChild(lessonsContainer);
 
-    // Add initial lesson fields
-    addLesson(lessonsContainer, moduleIndex);
+    addLesson(lessonsContainer, moduleIndex); 
 
-    // Add Lesson Button
     var addLessonBtn = document.createElement("button");
     addLessonBtn.type = "button";
-    addLessonBtn.setAttribute("class", "btn btn-info btn-sm mt-2");
+    addLessonBtn.classList.add("btn", "btn-info", "btn-sm", "mt-2"); 
     addLessonBtn.textContent = "Add Lesson";
     addLessonBtn.onclick = function () {
         addLesson(lessonsContainer, moduleIndex);
     };
     moduleDiv.appendChild(addLessonBtn);
 
-    // Append To Container
     modulesContainer.appendChild(moduleDiv);
 }
 
 function addLesson(container, moduleIndex) {
-    var moduleDiv = container.parentElement;
-    var lessonIndex = container.querySelectorAll(".lesson").length;
+    var lessonIndex = container.children.length; 
 
     var lessonDiv = document.createElement("div");
     lessonDiv.classList.add("lesson");
@@ -101,14 +92,14 @@ function addLesson(container, moduleIndex) {
     var nameInput = document.createElement("input");
     nameInput.type = "text";
     nameInput.name = `modules[${moduleIndex}][lessons][${lessonIndex}][name]`;
-    nameInput.setAttribute("class", "form-control lesson");
+    nameInput.classList.add("form-control", "lesson");
     nameInput.placeholder = "Lesson Name";
     lessonDiv.appendChild(nameInput);
 
     var linkInput = document.createElement("input");
     linkInput.type = "text";
     linkInput.name = `modules[${moduleIndex}][lessons][${lessonIndex}][link]`;
-    linkInput.setAttribute("class", "form-control lesson");
+    linkInput.classList.add("form-control", "lesson");
     linkInput.placeholder = "Lesson Link";
     lessonDiv.appendChild(linkInput);
 
@@ -130,7 +121,6 @@ function submitForm() {
     xhr.send(JSON.stringify(formData));
   }
 
-  
 
 /*--------------------------------------------
     header menu
