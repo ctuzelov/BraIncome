@@ -9,6 +9,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type CoursesMongo struct {
@@ -46,6 +47,26 @@ func (c *CoursesMongo) GetAll() ([]models.Course, error) {
 
 	var courses []models.Course
 	cursor, err := collection.Find(context.Background(), bson.M{})
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(context.Background())
+
+	if err := cursor.All(context.Background(), &courses); err != nil {
+		return nil, err
+	}
+
+	return courses, nil
+}
+
+func (c *CoursesMongo) GetSeveral(limit int, offset int) ([]models.Course, error) {
+	collection := c.db.Database("cluster0").Collection("courses")
+
+	var courses []models.Course
+	sortOptions := options.Find().SetSort(bson.D{{Key: "rating", Value: offset}})
+	limitOptions := options.Find().SetLimit(int64(limit))
+
+	cursor, err := collection.Find(context.Background(), bson.M{}, sortOptions, limitOptions)
 	if err != nil {
 		return nil, err
 	}

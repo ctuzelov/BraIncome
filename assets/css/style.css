@@ -1245,3 +1245,69 @@ textarea.form-control{
 .lesson {
     margin-bottom: 10px;
 }
+
+.container{
+    margin-top: 10px;
+}
+
+.youtube-link .icon{
+    width: 20px;
+    color: red;
+    flex-shrink: 0;
+    display: flex;
+}
+
+.youtube-link{
+    font-size: 18px;
+    font-family: 'Roboto', sans-serif;
+    color: #222;
+    line-height: 1.8;
+    display: flex;
+    gap: 16px;
+    margin: 8px 0;
+    cursor: pointer;
+    padding: 4px 32px;
+    transition: all 400ms ease;
+    border-radius: 50%;
+}
+
+.youtube-link:hover{
+    background-color: #bba0a0;
+    border-radius: 10px;
+}
+
+.youtube-player-overlay{
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 9999; /* Ensure it covers other elements */
+    display: none; /* Initially hide it */
+}
+
+.youtube-player-overlay.active{
+    opacity: 1;
+    pointer-events: auto;
+    display: block;
+}
+
+.youtube-player-popup{
+    position: fixed;
+    width: 80%;
+    left: 50%;
+    transform: translate(-50%, -100%);
+    transition: all 400ms ease;
+}
+
+.youtube-player-overlay.active .youtube-player-popup{
+    transform: translate(-50%, 0);
+}
+
+.youtube-player-overlay iframe{
+    width: 100%;
+    aspect-ratio: 16/9;
+}
+
+
+

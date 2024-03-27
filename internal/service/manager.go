@@ -19,6 +19,7 @@ type Courses interface {
 	Insert(course models.Course) error
 	Update(course models.Course) error
 	GetAll() ([]models.Course, error)
+	GetSeveral(limit int, offset int) ([]models.Course, error)
 	GetById(id primitive.ObjectID) (models.Course, error)
 	GetByInstructor(instructor string) ([]models.Course, error)
 	GetByRating() ([]models.Course, error)

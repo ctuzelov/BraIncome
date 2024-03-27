@@ -52,3 +52,7 @@ func (c *CoursesService) GetByCategory(category string) ([]models.Course, error)
 func (c *CoursesService) GetByTitle(title string) ([]models.Course, error) {
 	return c.repo.GetByTitle(title)
 }
+
+func (c *CoursesService) GetSeveral(limit int, offset int) ([]models.Course, error) {
+	return c.repo.GetSeveral(limit, offset)
+}
