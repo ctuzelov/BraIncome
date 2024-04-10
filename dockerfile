@@ -7,5 +7,5 @@ RUN go build -o braincome cmd/api/main.go
 FROM alpine
 WORKDIR /app 
 COPY --from=builder /app .
-CMD ["./forum"]
+CMD ["./braincome"]
 EXPOSE 8080
