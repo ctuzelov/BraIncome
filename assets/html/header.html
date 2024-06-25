@@ -15,33 +15,32 @@
           <i class="fas fa-times"></i>
         </button>
         <ul class="menu">
-          <li class="menu-item"><a href="/">Home</a></li>
-          <li class="menu-item"><a href="/courses">Courses</a></li>
+          <li class="menu-item"><a href="/">Главная</a></li>
+          <li class="menu-item"><a href="/courses">Курсы</a></li>
 
           {{if .IsAuthorized}}
           <li class="menu-item menu-item menu-item-has-children">
             <a href="#" class="js-toggle-sub-menu">{{ .User.First_name }} {{ .User.Last_name }}<i class="fas fa-chevron-down"></i></a>
             <ul class="sub-menu js-sub-menu">
               {{ if eq .User.User_type "ADMIN" }}
-              <li class="sub-menu-item"><a href="/course/publish">Add course</a></li>
-              <li class="sub-menu-item"><a href="/user/make-instructor">Add Instructor</a></li>
+              <li class="sub-menu-item"><a href="/course/publish">Добавить курс</a></li>
+              <li class="sub-menu-item"><a href="/user/make-instructor">Добавить инструктора</a></li>
               {{ end }}
-              <li class="sub-menu-item"><a href="/user/{.User.ID}">My profile</a></li>
-              <li class="sub-menu-item"><a href="/sign-out">Log out</a></li>
+              <li class="sub-menu-item"><a href="/sign-out">Выйти</a></li>
               
             </ul>
           </li>
           {{else}}
           <li class="menu-item menu-item menu-item-has-children">
-            <a href="#" class="js-toggle-sub-menu">registration / login<i class="fas fa-chevron-down"></i></a>
+            <a href="#" class="js-toggle-sub-menu">регистрация / вход<i class="fas fa-chevron-down"></i></a>
             <ul class="sub-menu js-sub-menu">
-              <li class="sub-menu-item"><a href="/sign-in">Log in</a></li>
-              <li class="sub-menu-item"><a href="/sign-up">Sign up</a></li>
+              <li class="sub-menu-item"><a href="/sign-in">Войти</a></li>
+              <li class="sub-menu-item"><a href="/sign-up">Регистрация</a></li>
 
             </ul>
           </li>
           {{end}}
-          <li class="menu-item"><a href="/contact">Contact</a></li>
+          <li class="menu-item"><a href="/contact">Контакты</a></li>
         </ul>
        </nav>
       </div>

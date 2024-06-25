@@ -62,7 +62,7 @@ function addModule() {
     moduleNameInput.type = "text";
     moduleNameInput.name = `modules[${moduleIndex}][name]`;
     moduleNameInput.classList.add("form-control", "mb-2");
-    moduleNameInput.placeholder = "Module Name";
+    moduleNameInput.placeholder = "Название модуля";
     moduleDiv.appendChild(moduleNameInput);
 
     var lessonsContainer = document.createElement("div");
@@ -74,7 +74,7 @@ function addModule() {
     var addLessonBtn = document.createElement("button");
     addLessonBtn.type = "button";
     addLessonBtn.classList.add("btn", "btn-info", "btn-sm", "mt-2"); 
-    addLessonBtn.textContent = "Add Lesson";
+    addLessonBtn.textContent = "Добавить урок";
     addLessonBtn.onclick = function () {
         addLesson(lessonsContainer, moduleIndex);
     };
@@ -93,14 +93,14 @@ function addLesson(container, moduleIndex) {
     nameInput.type = "text";
     nameInput.name = `modules[${moduleIndex}][lessons][${lessonIndex}][name]`;
     nameInput.classList.add("form-control", "lesson");
-    nameInput.placeholder = "Lesson Name";
+    nameInput.placeholder = "Название урока";
     lessonDiv.appendChild(nameInput);
 
     var linkInput = document.createElement("input");
     linkInput.type = "text";
     linkInput.name = `modules[${moduleIndex}][lessons][${lessonIndex}][link]`;
     linkInput.classList.add("form-control", "lesson");
-    linkInput.placeholder = "Lesson Link";
+    linkInput.placeholder = "Ссылка на урок";
     lessonDiv.appendChild(linkInput);
 
     container.appendChild(lessonDiv);

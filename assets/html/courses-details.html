@@ -31,8 +31,8 @@
       <div class="container">
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb mb-0">
-            <li class="breadcrumb-item"><a href="/">Home</a></li>
-            <li class="breadcrumb-item"><a href="/courses">Courses</a></li>
+            <li class="breadcrumb-item"><a href="/">Главная</a></li>
+            <li class="breadcrumb-item"><a href="/courses">Курсы</a></li>
             <li class="breadcrumb-item active" aria-current="page">{{.Content.Title}}</li>
           </ol>
         </nav>
@@ -60,10 +60,10 @@
                 <span class="reviews">{{ .Content.Reviews }}</span>
               </div>
               <ul>
-                <li>Enrolled students - <span>{{.Content.Enrolled}}</span></li>
-                <li>Created by - <span>{{.Content.Instructor.First_name}} {{.Content.Instructor.Last_name}}</a></span></li>
-                <li>Last updated - <span>{{.Content.LastUpdated.Format "2006-01-02 15:04:05"}}</span></li>
-                <li>Language - <span>{{.Content.Language}}</span></li>
+                <li>Зачисленные студенты - <span>{{.Content.Enrolled}}</span></li>
+                <li>Создатель - <span>{{.Content.Instructor.First_name}} {{.Content.Instructor.Last_name}}</a></span></li>
+                <li>Последний раз обновлен - <span>{{.Content.LastUpdated.Format "2006-01-02 15:04:05"}}</span></li>
+                <li>Язык - <span>{{.Content.Language}}</span></li>
               </ul>
             </div>
             <!-- course header end -->
