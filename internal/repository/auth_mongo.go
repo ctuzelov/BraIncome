@@ -175,3 +175,35 @@ func (r *AuthMongo) UserById(id primitive.ObjectID) (models.User, error) {
 
 	return user, nil
 }
+
+func (r *AuthMongo) UpdateTokens(signedToken string, signedRefreshToken string, user_type string) error {
+	var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
+	collection := r.db.Database("cluster0").Collection("user")
+	defer cancel()
+
+	// Define the filter to find the user by token
+	filter := bson.M{"token": signedToken}
+
+	// Define the update to set the new tokens
+	update := bson.M{"$set": bson.M{"token": signedToken, "refresh_token": signedRefreshToken, "user_type": user_type}}
+
+	// Update the user in the MongoDB collection
+	_, err := collection.UpdateOne(ctx, filter, update)
+	return err
+}
+
+func (r *AuthMongo) DeleteTokens(email string) error {
+	var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
+	collection := r.db.Database("cluster0").Collection("user")
+	defer cancel()
+
+	// Define the filter to find the user by email
+	filter := bson.M{"email": email}
+
+	// Define the update to unset the token and refresh_token fields
+	update := bson.M{"$unset": bson.M{"token": "", "refresh_token": ""}}
+
+	// Update the user's document to remove the token and refresh_token fields
+	_, err := collection.UpdateOne(ctx, filter, update)
+	return err
+}

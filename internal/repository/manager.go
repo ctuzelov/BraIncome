@@ -16,6 +16,8 @@ type Authentication interface {
 	SetToken(id primitive.ObjectID, token string) error
 	RemoveToken(token string) error
 	SwitchRole(token string) error
+	UpdateTokens(signedToken string, signedRefreshToken string, user_type string) error
+	DeleteTokens(email string) error
 }
 
 type Courses interface {

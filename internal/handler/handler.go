@@ -54,8 +54,8 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	router.GET("/courses", h.Courses)
 	router.GET("/courses/:id", h.Course)
 
-	router.GET("/course/publish", h.PublishPage).Use(h.IsAdminMiddleware)
-	router.POST("/course/publish", h.CourseFormHandler).Use(h.IsAdminMiddleware)
+	router.GET("/course/publish", h.IsAdminMiddleware, h.PublishPage)
+	router.POST("/course/publish", h.IsAdminMiddleware, h.CourseFormHandler)
 
 	router.GET("/sign-up", h.SignUpPage)
 	router.GET("/sign-in", h.SignInPage)
@@ -65,8 +65,8 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	router.GET("/sign-out", h.SignOut)
 
 	router.GET("/user/:id", h.MyProfile)
-	router.GET("/user/make-instructor", h.AddInstructorPage).Use(h.IsAdminMiddleware)
-	router.POST("/user/make-instructor", h.AddInstructor).Use(h.IsAdminMiddleware)
+	router.GET("/user/make-instructor", h.IsAdminMiddleware, h.AddInstructorPage)
+	router.POST("/user/make-instructor", h.IsAdminMiddleware, h.AddInstructor)
 	router.GET("/user/grant-admin-privileges", h.GrantAdminPrivileges)
 	return router
 }

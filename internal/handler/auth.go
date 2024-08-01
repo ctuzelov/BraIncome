@@ -47,6 +47,7 @@ func (h *Handler) SignUp(c *gin.Context) {
 
 	data.ErrMsgs = validator.GetErrMsgs(form)
 	if len(data.ErrMsgs) != 0 {
+		fmt.Println(data.ErrMsgs)
 		h.TemplateRender(c, http.StatusUnprocessableEntity, "sign-up.html", data)
 		return
 	}
@@ -66,12 +67,14 @@ func (h *Handler) SignUp(c *gin.Context) {
 		return
 	}
 
+	fmt.Println(data, "aaaaaaaaaaaaaa")
+
 	c.Redirect(http.StatusSeeOther, "/sign-in")
 }
 
 func (h *Handler) SignIn(c *gin.Context) {
 	c.Request.ParseForm()
-
+	fmt.Println("sdfasfasfdsafds")
 	firstName := c.Request.PostForm.Get("first_name")
 	lastName := c.Request.PostForm.Get("last_name")
 	email := c.Request.PostForm.Get("email")
@@ -109,12 +112,7 @@ func (h *Handler) SignIn(c *gin.Context) {
 		return
 	}
 
-	cookie := &http.Cookie{
-		Name:  "session",
-		Value: *user.Token,
-		Path:  "/",
-	}
-	c.SetCookie(cookie.Name, cookie.Value, 0, cookie.Path, cookie.Domain, false, false)
+	c.SetCookie("token", user.Token, 3600, "/", "", false, true)
 
 	c.Redirect(http.StatusSeeOther, "/")
 }
@@ -127,12 +125,14 @@ func (h *Handler) SignOut(c *gin.Context) {
 	// 	return
 	// }
 
-	err := h.services.LogOut(*data.User.Token)
+	err := h.services.DeleteTokensByEmail(data.User.Email)
 	if err != nil {
-		c.Error(err)
-		h.errorpage(c, http.StatusInternalServerError, err)
+		h.errorpage(c, http.StatusBadRequest, err)
 		return
 	}
+
+	c.SetCookie("token", "", -1, "/", "", false, true)
+	c.SetCookie("refresh_token", "", -1, "/", "", false, true)
 
 	c.Redirect(http.StatusSeeOther, "/")
 }

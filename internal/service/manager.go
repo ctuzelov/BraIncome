@@ -13,6 +13,7 @@ type User interface {
 	GetByToken(token string) (models.User, error)
 	LogOut(token string) error
 	MakeAdmin(email string) error
+	DeleteTokensByEmail(email string) error
 }
 
 type Courses interface {

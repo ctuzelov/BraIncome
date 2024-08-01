@@ -4,8 +4,11 @@ import (
 	"braincome/internal/hasher"
 	"braincome/internal/models"
 	"braincome/internal/repository"
+	"braincome/util"
 	"errors"
 	"fmt"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type AuthService struct {
@@ -31,10 +34,16 @@ func (u *AuthService) SignUp(m models.User) error {
 	if err != nil && !errors.Is(err, models.ErrNoRecord) {
 		return err
 	}
-	if user.First_name == m.First_name {
-		return models.ErrDuplicateName
-	}
+	// if user.First_name == m.First_name {
+	// 	return models.ErrDuplicateName
+	// }
 	m.Password, err = hasher.Encrypt(m.Password)
+	if err != nil {
+		return err
+	}
+
+	m.Token, m.Refresh_Token, err = util.GenerateAllTokens(m.Email, m.First_name, m.User_type, (util.ObjectIDToString(user.ID)))
+
 	if err != nil {
 		return err
 	}
@@ -61,15 +70,41 @@ func (u *AuthService) SignIn(login, password string) (models.User, error) {
 		return m, models.ErrInvalidCredentials
 	}
 
-	m.Token, err = hasher.GenerateToken()
+	m.Token, m.Refresh_Token, err = util.GenerateAllTokens(m.Email, m.First_name, m.User_type, util.ObjectIDToString(m.ID))
 	if err != nil {
 		return m, err
 	}
-	err = u.repo.SetToken(m.ID, *m.Token)
-	if err != nil {
-		return m, err
-	}
+
+	u.UpdateAllTokens(m.Token, m.Refresh_Token, m.User_type, m.ID)
+
 	return m, nil
+}
+
+func (a *AuthService) UpdateAllTokens(signedToken string, signedRefreshToken string, user_type string, id primitive.ObjectID) (string, string, error) {
+	const op = "util.UpdateAllTokens"
+
+	_, err := util.ValidateToken(signedRefreshToken)
+	if err != nil {
+		return "", "", fmt.Errorf("%s: %w", op, err)
+	}
+
+	err = a.repo.UpdateTokens(signedToken, signedRefreshToken, user_type)
+	if err != nil {
+		return "", "", fmt.Errorf("%s: %w", op, err)
+	}
+
+	return signedToken, signedRefreshToken, nil
+}
+
+func (u *AuthService) DeleteTokensByEmail(email string) error {
+	const op = "service.user.DeleteTokensByEmail"
+
+	err := u.repo.DeleteTokens(email)
+	if err != nil {
+		return fmt.Errorf("%s: %w", op, err)
+	}
+
+	return nil
 }
 
 func (u *AuthService) GetByToken(token string) (models.User, error) {

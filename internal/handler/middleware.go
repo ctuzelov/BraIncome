@@ -2,6 +2,7 @@ package handler
 
 import (
 	"braincome/internal/models"
+	"braincome/util"
 	"errors"
 	"net/http"
 
@@ -9,67 +10,42 @@ import (
 )
 
 func (h *Handler) Middleware(c *gin.Context) {
-	cookie, err := c.Request.Cookie("session")
+	token, err := c.Cookie("token")
 	data := &Data{}
+
+	// fmt.Println("fghrgjrtjrth")
 
 	switch err {
 	case http.ErrNoCookie:
 		data.User = models.User{}
+		data.IsAuthorized = false
+		data.IsAdmin = false
 	case nil:
-		data.User, err = h.services.User.GetByToken(cookie.Value)
-		if err != nil && !errors.Is(err, models.ErrNoRecord) {
-			h.errorpage(c, http.StatusInternalServerError, err)
-			c.Abort()
-			return
+		validToken, err := util.ValidateToken(token)
+		if err != nil {
+			h.errorpage(c, http.StatusBadRequest, err)
 		}
 
-		if data.User.Token != nil {
-			data.IsAuthorized = true
-		}
-
-	default:
-		h.errorpage(c, http.StatusInternalServerError, err)
-		c.Abort()
-		return
+		id := validToken["uid"].(string)
+		ID, _ := util.StringToObjectID(id)
+		data.User.Email, data.User.User_type, data.User.First_name, data.User.ID = validToken["email"].(string), validToken["user_type"].(string), validToken["name"].(string), ID
+		data.IsAuthorized = true
+		data.IsAdmin = data.User.User_type == "admin"
 	}
 
 	c.Set("data", data)
+
 	c.Next()
 }
 
 func (h *Handler) IsAdminMiddleware(c *gin.Context) {
-	cookie, err := c.Request.Cookie("session")
-	data := &Data{}
+	data := c.MustGet("data").(*Data)
 
-	switch err {
-	case http.ErrNoCookie:
-		data.User = models.User{}
-	case nil:
-		data.User, err = h.services.User.GetByToken(cookie.Value)
-		if err != nil && !errors.Is(err, models.ErrNoRecord) {
-			h.errorpage(c, http.StatusInternalServerError, err)
-			c.Abort()
-			return
-		}
-
-		if data.User.Token != nil {
-			data.IsAuthorized = true
-		}
-
-		if data.User == (models.User{}) {
-			return
-		}
-
-		if data.User.User_type != "ADMIN" {
-			h.errorpage(c, http.StatusUnauthorized, nil)
-		}
-
-	default:
-		h.errorpage(c, http.StatusInternalServerError, err)
+	if data.User.Email != "chingizkhan.tuzelov@gmail.com" {
+		h.errorpage(c, http.StatusForbidden, errors.New("admin access required"))
 		c.Abort()
 		return
 	}
 
-	c.Set("data", data)
 	c.Next()
 }
