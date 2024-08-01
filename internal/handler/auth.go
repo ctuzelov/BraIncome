@@ -122,10 +122,10 @@ func (h *Handler) SignIn(c *gin.Context) {
 func (h *Handler) SignOut(c *gin.Context) {
 	data := c.MustGet("data").(*Data)
 
-	if data.User.Email == "" && data.User.First_name == "" {
-		h.errorpage(c, http.StatusUnauthorized, nil)
-		return
-	}
+	// if data.User.Email == "" && data.User.First_name == "" {
+	// 	h.errorpage(c, http.StatusUnauthorized, nil)
+	// 	return
+	// }
 
 	err := h.services.LogOut(*data.User.Token)
 	if err != nil {
